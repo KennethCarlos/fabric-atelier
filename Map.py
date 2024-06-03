@@ -16,4 +16,6 @@ l2=map(lambda x:x*2,l1)
 
 print(list(l2))
 
+#test 123
+#kkkk
 
