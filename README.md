@@ -17,13 +17,14 @@ An *atelier* (French: workshop) is where craftsmen create with precision and art
 
 ## Features
 
-- 🚀 **Blazingly Fast** - Sub-millisecond pattern discovery using Apache Arrow
-- 🔍 **Semantic Search** - Find the right pattern using natural language
-- 🎯 **200+ Patterns** - Access all Fabric patterns via MCP
-- ⚡ **Zero-Copy Operations** - Parquet-cached embeddings for instant startup
-- 🦀 **Rust Performance** - ~8MB binary, <10ms startup, ~25MB memory
+- 🚀 **Blazingly Fast** - Built with Rust for maximum performance
+- 🎯 **226 Patterns** - All Fabric patterns accessible via MCP
+- 🐳 **Docker Ready** - Pull and run in seconds
+- 🤖 **LLM Powered** - Ollama, OpenAI, or Anthropic support
+- 🦀 **Rust Performance** - 281MB Docker image, <50ms startup
 - 🔗 **Auto-Sync** - Git submodule keeps patterns up-to-date with Fabric
-- 🎨 **Dynamic Tagging** - Auto-categorization for intelligent pattern selection
+- 🔒 **Secure** - Non-root Docker user, minimal dependencies
+- 📊 **Benchmarked** - 5,000+ req/s, comprehensive performance testing
 
 ## Architecture
 
@@ -46,14 +47,38 @@ fabric-atelier/
 
 ## Quick Start
 
-### Prerequisites
+### Option 1: Docker (Recommended) 🐳
 
-- Rust 1.70+ (`curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`)
-- [Fabric](https://github.com/danielmiessler/fabric) installed and configured
-- OpenAI or Anthropic API key (for embeddings)
+**Pull from Docker Hub:**
+```bash
+docker pull copyleftdev/fabric-atelier:latest
+```
 
-### Installation
+**Configure Claude Desktop:**
+```json
+{
+  "mcpServers": {
+    "fabric-atelier": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "copyleftdev/fabric-atelier:latest"]
+    }
+  }
+}
+```
 
+**Test it:**
+```bash
+echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}' | \
+  docker run -i --rm copyleftdev/fabric-atelier:latest
+```
+
+### Option 2: Build from Source
+
+**Prerequisites:**
+- Rust 1.90+ (`curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`)
+- Local LLM (Ollama) or API keys (OpenAI/Anthropic)
+
+**Installation:**
 ```bash
 # Clone with submodules
 git clone --recursive https://github.com/copyleftdev/fabric-atelier.git
@@ -148,13 +173,16 @@ This approach:
 
 ## Performance
 
-| Metric | Fabric Atelier (Rust + Arrow) | Typical Go Implementation |
-|--------|-------------------------------|---------------------------|
-| Binary size | ~8 MB | ~50 MB |
-| Startup time | <10 ms | ~50 ms |
-| Memory usage | ~25 MB | ~100 MB |
-| Pattern search | <1 ms | ~5 ms |
-| SIMD acceleration | ✅ Yes | ❌ No |
+| Metric | Fabric Atelier | Notes |
+|--------|----------------|-------|
+| Docker image | 281 MB | Multi-stage build with cargo-chef |
+| Startup time | <50 ms | Pattern loading included |
+| Memory usage | ~30 MB | Runtime footprint |
+| Throughput | 5,000-7,000 req/s | Concurrent request handling |
+| Pattern loading | ~11 ms | 226 patterns from disk |
+| Request latency | ~380 µs | Sub-millisecond response |
+
+See [BENCHMARKS.md](BENCHMARKS.md) for detailed performance analysis.
 
 ## Development
 
