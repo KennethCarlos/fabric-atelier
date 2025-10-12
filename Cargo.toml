@@ -1,0 +1,55 @@
+[package]
+name = "fabric-atelier"
+version = "0.1.0"
+edition = "2021"
+authors = ["copyleftdev"]
+description = "A high-performance MCP server for Fabric patterns built with Rust + Apache Arrow"
+repository = "https://github.com/copyleftdev/fabric-atelier"
+license = "MIT"
+keywords = ["mcp", "fabric", "ai", "patterns", "arrow"]
+categories = ["command-line-utilities", "development-tools"]
+
+[dependencies]
+# Async runtime
+tokio = { version = "1.40", features = ["full"] }
+
+# MCP Protocol (JSON-RPC over stdio)
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Arrow for vectorized operations
+arrow = "53.0"
+parquet = "53.0"
+datafusion = "42.0"
+
+# HTTP client for embeddings API
+reqwest = { version = "0.12", features = ["json"] }
+
+# Error handling
+anyhow = "1.0"
+thiserror = "1.0"
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = "0.3"
+
+# Configuration
+config = "0.14"
+toml = "0.8"
+
+[dev-dependencies]
+criterion = "0.5"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true
+
+[[bin]]
+name = "fabric-atelier"
+path = "src/main.rs"
+
+[[bin]]
+name = "generate-embeddings"
+path = "src/bin/generate_embeddings.rs"
