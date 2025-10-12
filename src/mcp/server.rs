@@ -4,12 +4,12 @@
 
 use crate::config::Settings;
 use crate::error::Result;
-use crate::fabric::{Pattern, PatternLoader};
+use crate::fabric::{Pattern, PatternExecutor, PatternLoader};
 use crate::mcp::protocol::{JsonRpcRequest, JsonRpcResponse, INTERNAL_ERROR, METHOD_NOT_FOUND};
 use serde_json::{json, Value};
 use std::sync::Arc;
 use tokio::sync::RwLock;
-use tracing::{debug, info};
+use tracing::{debug, info, warn};
 
 /// MCP server state.
 ///
@@ -18,6 +18,9 @@ use tracing::{debug, info};
 pub struct McpServer {
     /// Pattern loader for loading patterns.
     pattern_loader: Arc<PatternLoader>,
+
+    /// Pattern executor for running patterns.
+    pattern_executor: Arc<PatternExecutor>,
 
     /// Cached patterns (loaded once, reused).
     patterns: Arc<RwLock<Vec<Pattern>>>,
@@ -46,12 +49,16 @@ impl McpServer {
         // Initialize pattern loader
         let pattern_loader = Arc::new(PatternLoader::new()?);
 
+        // Initialize pattern executor
+        let pattern_executor = Arc::new(PatternExecutor::new(config.fabric.timeout_secs)?);
+
         // Load patterns
         let patterns = pattern_loader.load_all().await?;
         info!("Loaded {} patterns", patterns.len());
 
         Ok(Self {
             pattern_loader,
+            pattern_executor,
             patterns: Arc::new(RwLock::new(patterns)),
             config,
         })
@@ -159,6 +166,18 @@ impl McpServer {
             }
         };
 
+        // Extract content
+        let content = match params
+            .get("arguments")
+            .and_then(|args| args.get("content"))
+            .and_then(|c| c.as_str())
+        {
+            Some(c) => c,
+            None => {
+                return JsonRpcResponse::error(id, INTERNAL_ERROR, "Missing content argument");
+            }
+        };
+
         // Find pattern
         let patterns = self.patterns.read().await;
         let pattern = match patterns.iter().find(|p| p.name == pattern_name) {
@@ -172,21 +191,27 @@ impl McpServer {
             }
         };
 
-        // For now, return pattern information
-        // TODO: Implement actual pattern execution via Fabric CLI
-        JsonRpcResponse::success(
-            id,
-            json!({
-                "content": [{
-                    "type": "text",
-                    "text": format!(
-                        "Pattern: {}\nDescription: {}\n\nThis will execute the pattern via Fabric CLI (not yet implemented).",
-                        pattern.name,
-                        pattern.description
-                    )
-                }]
-            }),
-        )
+        debug!("Executing pattern '{}' with {} bytes of content", pattern.name, content.len());
+
+        // Execute pattern via Fabric CLI
+        match self.pattern_executor.execute(&pattern.name, content).await {
+            Ok(output) => {
+                debug!("Pattern execution successful, output: {} bytes", output.len());
+                JsonRpcResponse::success(
+                    id,
+                    json!({
+                        "content": [{
+                            "type": "text",
+                            "text": output
+                        }]
+                    }),
+                )
+            }
+            Err(e) => {
+                warn!("Pattern execution failed: {}", e);
+                JsonRpcResponse::error(id, INTERNAL_ERROR, format!("Execution failed: {e}"))
+            }
+        }
     }
 
     /// Handle unknown method.
