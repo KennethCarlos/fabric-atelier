@@ -3,7 +3,7 @@
   "name": "io.github.copyleftdev/fabric-atelier",
   "title": "Fabric Atelier",
   "description": "AI-powered content processing with 226 Fabric patterns for writing, analysis, and code generation.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "license": "MIT",
   "homepage": "https://github.com/copyleftdev/fabric-atelier",
   "repository": {
@@ -62,7 +62,7 @@
       "registryType": "oci",
       "registryBaseUrl": "https://docker.io",
       "identifier": "copyleftdev/fabric-atelier",
-      "version": "0.1.1",
+      "version": "0.1.2",
       "transport": {
         "type": "stdio"
       }
