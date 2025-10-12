@@ -21,6 +21,7 @@
 
 pub mod config;
 pub mod error;
+pub mod fabric;
 pub mod utils;
 
 // Re-export commonly used types
