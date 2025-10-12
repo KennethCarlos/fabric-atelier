@@ -4,12 +4,12 @@
 
 use crate::config::Settings;
 use crate::error::Result;
-use crate::fabric::{Pattern, PatternExecutor, PatternLoader};
+use crate::fabric::{Pattern, PatternLoader};
 use crate::mcp::protocol::{JsonRpcRequest, JsonRpcResponse, INTERNAL_ERROR, METHOD_NOT_FOUND};
 use serde_json::{json, Value};
 use std::sync::Arc;
 use tokio::sync::RwLock;
-use tracing::{debug, info, warn};
+use tracing::{debug, info};
 
 /// MCP server state.
 ///
@@ -18,9 +18,6 @@ use tracing::{debug, info, warn};
 pub struct McpServer {
     /// Pattern loader for loading patterns.
     pattern_loader: Arc<PatternLoader>,
-
-    /// Pattern executor for running patterns.
-    pattern_executor: Arc<PatternExecutor>,
 
     /// Cached patterns (loaded once, reused).
     patterns: Arc<RwLock<Vec<Pattern>>>,
@@ -49,16 +46,12 @@ impl McpServer {
         // Initialize pattern loader
         let pattern_loader = Arc::new(PatternLoader::new()?);
 
-        // Initialize pattern executor
-        let pattern_executor = Arc::new(PatternExecutor::new(config.fabric.timeout_secs)?);
-
         // Load patterns
         let patterns = pattern_loader.load_all().await?;
         info!("Loaded {} patterns", patterns.len());
 
         Ok(Self {
             pattern_loader,
-            pattern_executor,
             patterns: Arc::new(RwLock::new(patterns)),
             config,
         })
@@ -193,25 +186,30 @@ impl McpServer {
 
         debug!("Executing pattern '{}' with {} bytes of content", pattern.name, content.len());
 
-        // Execute pattern via Fabric CLI
-        match self.pattern_executor.execute(&pattern.name, content).await {
-            Ok(output) => {
-                debug!("Pattern execution successful, output: {} bytes", output.len());
-                JsonRpcResponse::success(
-                    id,
-                    json!({
-                        "content": [{
-                            "type": "text",
-                            "text": output
-                        }]
-                    }),
-                )
-            }
-            Err(e) => {
-                warn!("Pattern execution failed: {}", e);
-                JsonRpcResponse::error(id, INTERNAL_ERROR, format!("Execution failed: {e}"))
-            }
-        }
+        // Return the pattern's system prompt and user content for the AI to process
+        // The MCP client (Claude) will use the system prompt to process the content
+        let prompt_text = if let Some(ref user_prompt) = pattern.user_prompt {
+            format!(
+                "# System Prompt\n\n{}\n\n# User Prompt Template\n\n{}\n\n# Content to Process\n\n{}",
+                pattern.system_prompt, user_prompt, content
+            )
+        } else {
+            format!(
+                "# System Prompt\n\n{}\n\n# Content to Process\n\n{}",
+                pattern.system_prompt, content
+            )
+        };
+
+        debug!("Pattern execution successful, returning prompt with {} bytes", prompt_text.len());
+        JsonRpcResponse::success(
+            id,
+            json!({
+                "content": [{
+                    "type": "text",
+                    "text": prompt_text
+                }]
+            }),
+        )
     }
 
     /// Handle unknown method.
