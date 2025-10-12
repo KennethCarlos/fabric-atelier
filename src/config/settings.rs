@@ -24,6 +24,9 @@ pub struct Settings {
     /// Fabric integration configuration.
     pub fabric: FabricConfig,
 
+    /// LLM configuration.
+    pub llm: LlmConfig,
+
     /// Embeddings configuration.
     pub embeddings: EmbeddingsConfig,
 
@@ -53,6 +56,21 @@ pub struct FabricConfig {
     /// Pattern execution timeout in seconds.
     #[serde(default = "default_timeout")]
     pub timeout_secs: u64,
+}
+
+/// LLM configuration.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct LlmConfig {
+    /// LLM provider (ollama, openai, anthropic).
+    #[serde(default = "default_llm_provider")]
+    pub provider: String,
+
+    /// Model name to use.
+    #[serde(default = "default_llm_model")]
+    pub model: String,
+
+    /// API key (not needed for Ollama).
+    pub api_key: Option<String>,
 }
 
 /// Embeddings configuration.
@@ -138,6 +156,11 @@ impl Default for Settings {
                 cli_path: None,
                 timeout_secs: default_timeout(),
             },
+            llm: LlmConfig {
+                provider: default_llm_provider(),
+                model: default_llm_model(),
+                api_key: std::env::var("OPENAI_API_KEY").ok(),
+            },
             embeddings: EmbeddingsConfig {
                 provider: default_provider(),
                 model: default_model(),
@@ -176,6 +199,14 @@ fn default_cache_path() -> String {
 
 fn default_true() -> bool {
     true
+}
+
+fn default_llm_provider() -> String {
+    "ollama".to_string()
+}
+
+fn default_llm_model() -> String {
+    std::env::var("LLM_MODEL").unwrap_or_else(|_| "llama3".to_string())
 }
 
 #[cfg(test)]

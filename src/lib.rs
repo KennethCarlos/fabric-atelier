@@ -22,6 +22,7 @@
 pub mod config;
 pub mod error;
 pub mod fabric;
+pub mod llm;
 pub mod mcp;
 pub mod utils;
 

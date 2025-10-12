@@ -5,11 +5,12 @@
 use crate::config::Settings;
 use crate::error::Result;
 use crate::fabric::{Pattern, PatternLoader};
+use crate::llm::LlmClient;
 use crate::mcp::protocol::{JsonRpcRequest, JsonRpcResponse, INTERNAL_ERROR, METHOD_NOT_FOUND};
 use serde_json::{json, Value};
 use std::sync::Arc;
 use tokio::sync::RwLock;
-use tracing::{debug, info};
+use tracing::{debug, info, warn};
 
 /// MCP server state.
 ///
@@ -18,6 +19,9 @@ use tracing::{debug, info};
 pub struct McpServer {
     /// Pattern loader for loading patterns.
     pattern_loader: Arc<PatternLoader>,
+
+    /// LLM client for processing patterns.
+    llm_client: Arc<LlmClient>,
 
     /// Cached patterns (loaded once, reused).
     patterns: Arc<RwLock<Vec<Pattern>>>,
@@ -46,12 +50,20 @@ impl McpServer {
         // Initialize pattern loader
         let pattern_loader = Arc::new(PatternLoader::new()?);
 
+        // Initialize LLM client
+        let llm_client = Arc::new(LlmClient::new(
+            config.llm.provider.clone(),
+            config.llm.api_key.clone().unwrap_or_default(),
+            config.llm.model.clone(),
+        ));
+
         // Load patterns
         let patterns = pattern_loader.load_all().await?;
         info!("Loaded {} patterns", patterns.len());
 
         Ok(Self {
             pattern_loader,
+            llm_client,
             patterns: Arc::new(RwLock::new(patterns)),
             config,
         })
@@ -186,30 +198,25 @@ impl McpServer {
 
         debug!("Executing pattern '{}' with {} bytes of content", pattern.name, content.len());
 
-        // Return the pattern's system prompt and user content for the AI to process
-        // The MCP client (Claude) will use the system prompt to process the content
-        let prompt_text = if let Some(ref user_prompt) = pattern.user_prompt {
-            format!(
-                "# System Prompt\n\n{}\n\n# User Prompt Template\n\n{}\n\n# Content to Process\n\n{}",
-                pattern.system_prompt, user_prompt, content
-            )
-        } else {
-            format!(
-                "# System Prompt\n\n{}\n\n# Content to Process\n\n{}",
-                pattern.system_prompt, content
-            )
-        };
-
-        debug!("Pattern execution successful, returning prompt with {} bytes", prompt_text.len());
-        JsonRpcResponse::success(
-            id,
-            json!({
-                "content": [{
-                    "type": "text",
-                    "text": prompt_text
-                }]
-            }),
-        )
+        // Process the pattern using the LLM
+        match self.llm_client.process(&pattern.system_prompt, content).await {
+            Ok(output) => {
+                info!("Pattern '{}' executed successfully, output: {} bytes", pattern.name, output.len());
+                JsonRpcResponse::success(
+                    id,
+                    json!({
+                        "content": [{
+                            "type": "text",
+                            "text": output
+                        }]
+                    }),
+                )
+            }
+            Err(e) => {
+                warn!("Pattern '{}' execution failed: {}", pattern.name, e);
+                JsonRpcResponse::error(id, INTERNAL_ERROR, format!("Pattern execution failed: {e}"))
+            }
+        }
     }
 
     /// Handle unknown method.
