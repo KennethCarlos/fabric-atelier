@@ -44,9 +44,7 @@ fabric-atelier/
 │   │   └── data/patterns/   # 200+ Fabric patterns (auto-synced)
 │   └── embeddings.parquet   # Cached pattern embeddings
 └── docs/
-    ├── DESIGN_SPEC.md       # Technical architecture
-    ├── PROPOSAL.md          # Project vision & philosophy
-    └── QUICKSTART.md        # Implementation guide
+    └── media/               # Project assets
 ```
 
 ## Quick Start
@@ -189,13 +187,13 @@ This approach:
 | Pattern loading | ~11 ms | 226 patterns from disk |
 | Request latency | ~380 µs | Sub-millisecond response |
 
-See [BENCHMARKS.md](BENCHMARKS.md) for detailed performance analysis.
+Benchmarked with comprehensive performance testing.
 
 ## Development
 
 ### Project Structure
 
-See [docs/DESIGN_SPEC.md](docs/DESIGN_SPEC.md) for detailed architecture.
+The project follows a modular Rust architecture with MCP protocol implementation, pattern loading, and semantic search capabilities.
 
 ### Building
 
@@ -227,9 +225,11 @@ cargo run --bin generate-embeddings
 
 ## Documentation
 
-- **[DESIGN_SPEC.md](docs/DESIGN_SPEC.md)** - Complete technical architecture
-- **[PROPOSAL.md](docs/PROPOSAL.md)** - Project vision and philosophy
-- **[QUICKSTART.md](docs/QUICKSTART.md)** - 30-minute implementation guide
+For detailed technical documentation, see the `docs/` directory:
+- **ARCHITECTURE.md** - System architecture and design
+- **BUILD_SYSTEM.md** - Build configuration and optimization
+- **MCP_SCHEMA_DOCUMENTATION.md** - MCP protocol implementation
+- **WINDSURF_SETUP.md** - Windsurf IDE integration guide
 
 ## Roadmap
 
@@ -246,7 +246,7 @@ cargo run --bin generate-embeddings
 
 ## Contributing
 
-Contributions welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) first.
+Contributions welcome! Please open an issue or pull request on GitHub.
 
 ## Philosophy
 
