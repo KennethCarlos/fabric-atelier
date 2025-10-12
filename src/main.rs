@@ -1,6 +1,11 @@
 //! Fabric Atelier MCP Server entry point.
 
-use fabric_atelier::{config::Settings, utils::logging, Result};
+use fabric_atelier::{
+    config::Settings,
+    mcp::{run_stdio_server, McpServer},
+    utils::logging,
+    Result,
+};
 use tracing::info;
 
 #[tokio::main]
@@ -16,8 +21,12 @@ async fn main() -> Result<()> {
         settings.server.name, settings.server.version
     );
 
-    // TODO: Initialize MCP server
-    info!("Server initialized successfully");
+    // Initialize MCP server
+    let server = McpServer::new(settings).await?;
+    info!("MCP server initialized successfully");
+
+    // Run stdio transport
+    run_stdio_server(server).await?;
 
     Ok(())
 }
