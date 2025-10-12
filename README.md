@@ -1,6 +1,10 @@
-# Fabric Atelier 🎨
-
-> *A high-performance atelier for Fabric patterns - MCP server built with Rust + Apache Arrow*
+<div align="center">
+  <img src="docs/media/logo.png" alt="Fabric Atelier Logo" width="200"/>
+  
+  # Fabric Atelier 🎨
+  
+  > *A high-performance atelier for Fabric patterns - MCP server built with Rust + Apache Arrow*
+</div>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Rust](https://img.shields.io/badge/rust-%23000000.svg?style=flat&logo=rust&logoColor=white)](https://www.rust-lang.org/)

@@ -26,3 +26,7 @@ data/*.parquet
 
 # Logs
 *.log
+
+# MCP Registry tokens (sensitive)
+.mcpregistry_registry_token
+.mcpregistry_github_token

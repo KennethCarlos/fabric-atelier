@@ -1,18 +1,23 @@
 {
-  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-16/server.schema.json",
   "name": "io.github.copyleftdev/fabric-atelier",
   "title": "Fabric Atelier",
-  "description": "AI-powered content processing with 226 Fabric patterns. Transform text with expert prompts for writing essays, analyzing content, extracting insights, security analysis, code generation, and more. Powered by local LLMs (Ollama) or cloud APIs (OpenAI, Anthropic).",
-  "version": "0.1.0",
+  "description": "AI-powered content processing with 226 Fabric patterns for writing, analysis, and code generation.",
+  "version": "0.1.1",
   "license": "MIT",
   "homepage": "https://github.com/copyleftdev/fabric-atelier",
   "repository": {
     "type": "git",
-    "url": "https://github.com/copyleftdev/fabric-atelier.git"
+    "url": "https://github.com/copyleftdev/fabric-atelier.git",
+    "source": "github"
   },
   "author": {
     "name": "copyleftdev",
     "url": "https://github.com/copyleftdev"
+  },
+  "icon": {
+    "src": "https://raw.githubusercontent.com/copyleftdev/fabric-atelier/master/docs/media/logo.png",
+    "mimeType": "image/png"
   },
   "categories": [
     "content-generation",
@@ -21,24 +26,43 @@
     "productivity"
   ],
   "tags": [
+    "mcp",
+    "model-context-protocol",
     "fabric",
-    "patterns",
-    "writing",
-    "analysis",
-    "security",
-    "coding",
+    "fabric-patterns",
+    "rust",
+    "apache-arrow",
     "llm",
+    "ai-assistant",
+    "claude-desktop",
     "ollama",
     "openai",
     "anthropic",
-    "content-processing",
-    "ai-assistant"
+    "prompt-engineering",
+    "content-generation",
+    "text-processing",
+    "semantic-search",
+    "vector-embeddings",
+    "docker",
+    "writing-assistant",
+    "code-generation",
+    "security-analysis",
+    "threat-analysis",
+    "essay-writing",
+    "content-analysis",
+    "ai-tools",
+    "productivity",
+    "automation",
+    "mcp-server",
+    "high-performance",
+    "rust-lang"
   ],
   "packages": [
     {
-      "registryType": "docker",
+      "registryType": "oci",
+      "registryBaseUrl": "https://docker.io",
       "identifier": "copyleftdev/fabric-atelier",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "transport": {
         "type": "stdio"
       }
