@@ -1,0 +1,53 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
+  "name": "io.github.copyleftdev/fabric-atelier",
+  "title": "Fabric Atelier",
+  "description": "AI-powered content processing with 226 Fabric patterns. Transform text with expert prompts for writing essays, analyzing content, extracting insights, security analysis, code generation, and more. Powered by local LLMs (Ollama) or cloud APIs (OpenAI, Anthropic).",
+  "version": "0.1.0",
+  "license": "MIT",
+  "homepage": "https://github.com/copyleftdev/fabric-atelier",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/copyleftdev/fabric-atelier.git"
+  },
+  "author": {
+    "name": "copyleftdev",
+    "url": "https://github.com/copyleftdev"
+  },
+  "categories": [
+    "content-generation",
+    "text-processing",
+    "ai-tools",
+    "productivity"
+  ],
+  "tags": [
+    "fabric",
+    "patterns",
+    "writing",
+    "analysis",
+    "security",
+    "coding",
+    "llm",
+    "ollama",
+    "openai",
+    "anthropic",
+    "content-processing",
+    "ai-assistant"
+  ],
+  "packages": [
+    {
+      "registryType": "docker",
+      "identifier": "copyleftdev/fabric-atelier",
+      "version": "0.1.0",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ],
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
+  "instructions": "Fabric Atelier provides 226 expert-crafted patterns for content processing. Each pattern is a specialized prompt designed for specific tasks like writing essays (fabric_write_essay_pg), analyzing content (fabric_analyze_claims), extracting insights (fabric_extract_insights), security analysis (fabric_analyze_threat_report), and much more. Simply call the appropriate tool with your content to get AI-powered results. All patterns are prefixed with 'fabric_' followed by the pattern name."
+}
