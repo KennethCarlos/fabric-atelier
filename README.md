@@ -11,7 +11,7 @@
 
 ## What is Fabric Atelier?
 
-**Fabric Atelier** is a blazingly fast [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server that exposes [Fabric's](https://github.com/danielmiessler/fabric) 200+ AI patterns as discoverable, executable tools for AI assistants like Claude Desktop, Cline, and other MCP clients.
+**Fabric Atelier** is a blazingly fast [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server that exposes [Fabric's](https://github.com/danielmiessler/fabric) 200+ AI patterns as discoverable, executable tools for AI assistants like Claude Desktop, Windsurf, Cline, and other MCP clients.
 
 Built with **Rust** and **Apache Arrow**, Atelier delivers sub-millisecond pattern discovery through vectorized semantic search, making Daniel Miessler's thoughtfully crafted patterns accessible to the entire MCP ecosystem.
 
@@ -105,6 +105,9 @@ code ~/Library/Application\ Support/Claude/claude_desktop_config.json
 ```bash
 code ~/.config/Claude/claude_desktop_config.json
 ```
+
+**Windsurf IDE:**
+See [WINDSURF_SETUP.md](WINDSURF_SETUP.md) for detailed Windsurf configuration.
 
 Add this configuration:
 ```json

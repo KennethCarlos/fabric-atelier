@@ -30,3 +30,6 @@ data/*.parquet
 # MCP Registry tokens (sensitive)
 .mcpregistry_registry_token
 .mcpregistry_github_token
+
+# Internal documentation (not for public view)
+docs/internal/
