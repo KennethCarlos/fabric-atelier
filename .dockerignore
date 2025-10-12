@@ -21,8 +21,7 @@ docs/
 # CI/CD
 .github/
 
-# Benchmarks
-benches/
+# Benchmark results (but keep benches/ source for Cargo.toml)
 criterion/
 
 # Test data
