@@ -1,3 +1,4 @@
+
 # Fabric Atelier - Development Context
 
 ## Project Status: Initial Setup Complete ✅
