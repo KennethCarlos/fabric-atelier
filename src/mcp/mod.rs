@@ -3,7 +3,7 @@
 //! This module implements the MCP protocol for exposing Fabric patterns
 //! as tools to MCP clients like Claude Desktop.
 
-mod protocol;
+pub mod protocol;
 mod server;
 mod stdio;
 
